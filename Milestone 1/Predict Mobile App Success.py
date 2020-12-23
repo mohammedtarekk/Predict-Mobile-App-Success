@@ -102,6 +102,7 @@ X = standard.fit_transform(X)
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.30, shuffle=True)
 
 # models
+print("\n")
 linear_regression(x_train, y_train, x_test, y_test)
 # polynomial_regression(3, x_train, y_train, x_test, y_test)
 
