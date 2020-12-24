@@ -13,7 +13,6 @@ from sklearn import svm
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import Ridge
 
-
 def data_analyze(df, show_corr=0):
     print("#" * 50)
     print("Main Info. About The Data:")
@@ -32,6 +31,23 @@ def data_analyze(df, show_corr=0):
         sns.heatmap(top_corr, annot=True)
         plt.show()
 
+mean_error = {}
+def linear_regression(x_train, y_train, x_test, y_test):
+    cls = linear_model.LinearRegression()
+    cls.fit(x_train, y_train)
+    # prediction
+    prediction = cls.predict(x_test)
+    # evaluation
+    # print('Co-efficient of linear regression', cls.coef_)
+    # print('Intercept of linear regression model', cls.intercept_)
+    print('linear_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
+    mean_error['linear_regression'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    plt.figure(figsize=(12, 7))
+    sns.regplot(prediction, y_test, color='teal')
+    plt.title('linear_regression model')
+    plt.xlabel('Predicted Ratings')
+    plt.ylabel('Actual Ratings')
+    plt.show()
 
 def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     poly_features = PolynomialFeatures(degree=degree)
@@ -49,20 +65,13 @@ def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     # print('Co-efficient of linear regression',poly_model.coef_)
     # print('Intercept of linear regression model',poly_model.intercept_)
     print('polynomial_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
-
-
-def linear_regression(x_train, y_train, x_test, y_test):
-    cls = linear_model.LinearRegression()
-    cls.fit(x_train, y_train)
-    # prediction
-    prediction = cls.predict(x_test)
-    # evaluation
-    # print('Co-efficient of linear regression', cls.coef_)
-    # print('Intercept of linear regression model', cls.intercept_)
-    print('linear_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
-    #plt.scatter(y_test, prediction)
-    #plt.show()
-
+    #mean_error['polynomial_regression'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    plt.figure(figsize=(12, 7))
+    sns.regplot(prediction, y_test, color='teal')
+    plt.title('polynomial_regression model')
+    plt.xlabel('Predicted Ratings')
+    plt.ylabel('Actual Ratings')
+    plt.show()
 
 def svr(x_train, y_train, x_test, y_test):
     model = svm.SVR()
@@ -73,7 +82,13 @@ def svr(x_train, y_train, x_test, y_test):
     # print('Co-efficient of linear regression', model.coef_)
     # print('Intercept of linear regression model', model.intercept_)
     print('SVR: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
-
+    mean_error['SVR'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    plt.figure(figsize=(12, 7))
+    sns.regplot(prediction, y_test, color='teal')
+    plt.title('SVR model')
+    plt.xlabel('Predicted Ratings')
+    plt.ylabel('Actual Ratings')
+    plt.show()
 
 def randomforest_regression(x_train, y_train, x_test, y_test):
     model = RandomForestRegressor()
@@ -84,7 +99,13 @@ def randomforest_regression(x_train, y_train, x_test, y_test):
     # print('Co-efficient of linear regression', model.coef_)
     # print('Intercept of linear regression model', model.intercept_)
     print('randomforest_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
-
+    mean_error['randomforest_regression'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    plt.figure(figsize=(12, 7))
+    sns.regplot(prediction, y_test, color='teal')
+    plt.title('randomforest_regression model')
+    plt.xlabel('Predicted Ratings')
+    plt.ylabel('Actual Ratings')
+    plt.show()
 
 def ridge(alpha,x_train, y_train, x_test, y_test):
     model = Ridge(alpha=alpha)
@@ -93,7 +114,13 @@ def ridge(alpha,x_train, y_train, x_test, y_test):
     # prediction
     prediction = model.predict(x_test)
     print('Ridge: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
-
+    mean_error['Ridge'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    plt.figure(figsize=(12, 7))
+    sns.regplot(prediction, y_test, color='teal')
+    plt.title('Ridge model')
+    plt.xlabel('Predicted Ratings')
+    plt.ylabel('Actual Ratings')
+    plt.show()
 
 ######################## MAIN ########################
 # Loading Data
@@ -145,3 +172,7 @@ polynomial_regression(2, x_train, y_train, x_test, y_test)
 svr(x_train, y_train, x_test, y_test)
 randomforest_regression(x_train, y_train, x_test, y_test)
 ridge(0.5, x_train, y_train, x_test, y_test)
+mean_error = pd.DataFrame.from_dict(mean_error,orient = 'index')
+mean_error.sort_values(by = 0, inplace = True)
+mean_error.plot(kind = 'barh')
+plt.show()
