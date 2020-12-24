@@ -37,6 +37,9 @@ def linear_regression(x_train, y_train, x_test, y_test):
     # print('Co-efficient of linear regression', cls.coef_)
     # print('Intercept of linear regression model', cls.intercept_)
     print('linear_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
+    #plt.scatter(y_test, prediction)
+    #plt.show()
+
 
 from sklearn import svm
 def svr(x_train, y_train, x_test, y_test):
@@ -59,6 +62,16 @@ def  randomforest_regression(x_train, y_train, x_test, y_test):
     # print('Co-efficient of linear regression', model.coef_)
     # print('Intercept of linear regression model', model.intercept_)
     print('randomforest_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
+
+from sklearn.linear_model import Ridge
+def  ridge(alpha,x_train, y_train, x_test, y_test):
+    model = Ridge(alpha=alpha)
+    # fit model
+    model.fit(x_train, y_train)
+    # prediction
+    prediction = model.predict(x_test)
+    print('Ridge: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
+
 
 # Loading Data
 data = pd.read_csv('AppleStore_training.csv')
@@ -118,3 +131,4 @@ linear_regression(x_train, y_train, x_test, y_test)
 polynomial_regression(2, x_train, y_train, x_test, y_test)
 svr(x_train, y_train, x_test, y_test)
 randomforest_regression(x_train, y_train, x_test, y_test)
+ridge(0.5,x_train, y_train, x_test, y_test)
