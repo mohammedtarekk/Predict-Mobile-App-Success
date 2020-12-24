@@ -9,6 +9,28 @@ from sklearn.preprocessing import OneHotEncoder, LabelEncoder
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn import svm
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import Ridge
+
+
+def data_analyze(df, show_corr=0):
+    print("#" * 50)
+    print("Main Info. About The Data:")
+    print(df.info())
+    print("#" * 50)
+    print("\nMissing Data Exploration:")
+    print(df.isnull().sum())
+    print("#" * 50 + "\n")
+
+    # Get the correlation between the features
+    if show_corr:
+        corr = df.corr()
+        top_feature = corr.index[abs(corr['user_rating'] > 0.1)]
+        plt.subplots(figsize=(12, 8))
+        top_corr = df[top_feature].corr()
+        sns.heatmap(top_corr, annot=True)
+        plt.show()
 
 
 def polynomial_regression(degree, X_train, y_train, X_test, y_test):
@@ -28,6 +50,7 @@ def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     # print('Intercept of linear regression model',poly_model.intercept_)
     print('polynomial_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
 
+
 def linear_regression(x_train, y_train, x_test, y_test):
     cls = linear_model.LinearRegression()
     cls.fit(x_train, y_train)
@@ -41,7 +64,6 @@ def linear_regression(x_train, y_train, x_test, y_test):
     #plt.show()
 
 
-from sklearn import svm
 def svr(x_train, y_train, x_test, y_test):
     model = svm.SVR()
     model.fit(x_train, y_train)
@@ -52,8 +74,8 @@ def svr(x_train, y_train, x_test, y_test):
     # print('Intercept of linear regression model', model.intercept_)
     print('SVR: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
 
-from sklearn.ensemble import RandomForestRegressor
-def  randomforest_regression(x_train, y_train, x_test, y_test):
+
+def randomforest_regression(x_train, y_train, x_test, y_test):
     model = RandomForestRegressor()
     model.fit(x_train, y_train)
     # prediction
@@ -63,8 +85,8 @@ def  randomforest_regression(x_train, y_train, x_test, y_test):
     # print('Intercept of linear regression model', model.intercept_)
     print('randomforest_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
 
-from sklearn.linear_model import Ridge
-def  ridge(alpha,x_train, y_train, x_test, y_test):
+
+def ridge(alpha,x_train, y_train, x_test, y_test):
     model = Ridge(alpha=alpha)
     # fit model
     model.fit(x_train, y_train)
@@ -73,28 +95,16 @@ def  ridge(alpha,x_train, y_train, x_test, y_test):
     print('Ridge: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
 
 
+######################## MAIN ########################
 # Loading Data
 data = pd.read_csv('AppleStore_training.csv')
 
-
-# Data Analysis
-print("Main Info. About The Data:")
-print(data.info())
-print("#" * 50)
-print("\nMissing Data Exploration:")
-print(data.isnull().sum())
-print("#" * 50 + "\n")
-
-# Get the correlation between the features
-corr = data.corr()
-top_feature = corr.index[abs(corr['user_rating'] > 0.5)]
-plt.subplots(figsize=(12, 8))
-top_corr = data[top_feature].corr()
-sns.heatmap(top_corr, annot=True)
-plt.show()
+# Data Analysis before pre-processing
+data_analyze(data, 1)
 
 # Data Pre-Processing
 data = data.drop(['id', 'track_name', 'currency', 'ver'], axis=1)  # discard unnecessary features
+data['user_rating_ver'] = data['user_rating_ver'].fillna(data['user_rating_ver'].median())  # filling null values of 'user_rating_ver'
 data.dropna(how='any', inplace=True)  # dropping rows with null values
 
 print('#' * 50)
@@ -107,6 +117,9 @@ print('#' * 50)
 i = data[data['prime_genre'] == '0'].index  # get the index of the noisy row which has prime_genre = 0
 print(data.loc[i])
 data = data.drop(i)  # drop this row
+
+print("\n##### Data analysis after cleaning #####")
+data_analyze(data)
 
 X = data.iloc[:, :11]  # Features
 Y = data['user_rating']  # Label
@@ -125,10 +138,10 @@ X = standard.fit_transform(X)
 # Splitting Data
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.30, shuffle=True)
 
-# models
+# models calling
 print("\n")
 linear_regression(x_train, y_train, x_test, y_test)
 polynomial_regression(2, x_train, y_train, x_test, y_test)
 svr(x_train, y_train, x_test, y_test)
 randomforest_regression(x_train, y_train, x_test, y_test)
-ridge(0.5,x_train, y_train, x_test, y_test)
+ridge(0.5, x_train, y_train, x_test, y_test)
