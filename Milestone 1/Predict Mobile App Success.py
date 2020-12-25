@@ -13,6 +13,7 @@ from sklearn import svm
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import Ridge
 
+
 def data_analyze(df, show_corr=0):
     print("#" * 50)
     print("Main Info. About The Data:")
@@ -31,6 +32,7 @@ def data_analyze(df, show_corr=0):
         sns.heatmap(top_corr, annot=True)
         plt.show()
 
+
 mean_error = {}
 def linear_regression(x_train, y_train, x_test, y_test):
     cls = linear_model.LinearRegression()
@@ -48,6 +50,7 @@ def linear_regression(x_train, y_train, x_test, y_test):
     plt.xlabel('Predicted Ratings')
     plt.ylabel('Actual Ratings')
     plt.show()
+
 
 def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     poly_features = PolynomialFeatures(degree=degree)
@@ -73,6 +76,7 @@ def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     plt.ylabel('Actual Ratings')
     plt.show()
 
+
 def svr(x_train, y_train, x_test, y_test):
     model = svm.SVR()
     model.fit(x_train, y_train)
@@ -89,6 +93,7 @@ def svr(x_train, y_train, x_test, y_test):
     plt.xlabel('Predicted Ratings')
     plt.ylabel('Actual Ratings')
     plt.show()
+
 
 def randomforest_regression(x_train, y_train, x_test, y_test):
     model = RandomForestRegressor()
@@ -107,6 +112,7 @@ def randomforest_regression(x_train, y_train, x_test, y_test):
     plt.ylabel('Actual Ratings')
     plt.show()
 
+
 def ridge(alpha,x_train, y_train, x_test, y_test):
     model = Ridge(alpha=alpha)
     # fit model
@@ -121,6 +127,7 @@ def ridge(alpha,x_train, y_train, x_test, y_test):
     plt.xlabel('Predicted Ratings')
     plt.ylabel('Actual Ratings')
     plt.show()
+
 
 ######################## MAIN ########################
 # Loading Data
@@ -172,7 +179,7 @@ polynomial_regression(2, x_train, y_train, x_test, y_test)
 svr(x_train, y_train, x_test, y_test)
 randomforest_regression(x_train, y_train, x_test, y_test)
 ridge(0.5, x_train, y_train, x_test, y_test)
-mean_error = pd.DataFrame.from_dict(mean_error,orient = 'index')
-mean_error.sort_values(by = 0, inplace = True)
-mean_error.plot(kind = 'barh')
+mean_error = pd.DataFrame.from_dict(mean_error, orient='index')
+mean_error.sort_values(by=0, inplace=True)
+mean_error.plot(kind='barh')
 plt.show()
