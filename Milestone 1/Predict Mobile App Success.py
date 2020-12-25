@@ -12,6 +12,7 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn import svm
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import Ridge
+import time
 
 
 def data_analyze(df, show_corr=0):
@@ -34,16 +35,20 @@ def data_analyze(df, show_corr=0):
 
 
 mean_error = {}
+training_time = {}
 def linear_regression(x_train, y_train, x_test, y_test):
-    cls = linear_model.LinearRegression()
-    cls.fit(x_train, y_train)
+    model = linear_model.LinearRegression()
+    start = time.time()
+    model.fit(x_train, y_train)
+    stop = time.time()
+    training_time['linear_regression'] = stop - start
+    print(f"linear_regression Training time: {stop - start}s")
     # prediction
-    prediction = cls.predict(x_test)
+    prediction = model.predict(x_test)
     # evaluation
-    # print('Co-efficient of linear regression', cls.coef_)
-    # print('Intercept of linear regression model', cls.intercept_)
     print('linear_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
     mean_error['linear_regression'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    #regression line plot
     plt.figure(figsize=(12, 7))
     sns.regplot(prediction, y_test, color='teal')
     plt.title('linear_regression model')
@@ -58,17 +63,19 @@ def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     X_train_poly = poly_features.fit_transform(X_train)
     # fit the transformed features to Linear Regression
     poly_model = linear_model.LinearRegression()
+    start = time.time()
     poly_model.fit(X_train_poly, y_train)
-    # predicting on training data-set
-    y_train_predicted = poly_model.predict(X_train_poly)
-    # predicting on test data-set
+    stop = time.time()
+    training_time['polynomial_regression'] = stop - start
+    print(f"polynomial_regression Training time: {stop - start}s")
+    # prediction
     prediction = poly_model.predict(poly_features.fit_transform(X_test))
     # evaluation
-    # print('Training error', metrics.mean_squared_error(y_test, y_train_predicted))
     # print('Co-efficient of linear regression',poly_model.coef_)
     # print('Intercept of linear regression model',poly_model.intercept_)
     print('polynomial_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
     #mean_error['polynomial_regression'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    # regression line plot
     plt.figure(figsize=(12, 7))
     sns.regplot(prediction, y_test, color='teal')
     plt.title('polynomial_regression model')
@@ -77,19 +84,22 @@ def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     plt.show()
 
 
-def svr(x_train, y_train, x_test, y_test):
+def supportVector_regression(x_train, y_train, x_test, y_test):
     model = svm.SVR()
+    start = time.time()
     model.fit(x_train, y_train)
+    stop = time.time()
+    training_time['supportVector_regression'] = stop - start
+    print(f"supportVector_regression Training time: {stop - start}s")
     # prediction
     prediction = model.predict(x_test)
     # evaluation
-    # print('Co-efficient of linear regression', model.coef_)
-    # print('Intercept of linear regression model', model.intercept_)
-    print('SVR: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
-    mean_error['SVR'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    print('supportVector_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
+    mean_error['supportVector_regression'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    # regression line plot
     plt.figure(figsize=(12, 7))
     sns.regplot(prediction, y_test, color='teal')
-    plt.title('SVR model')
+    plt.title('supportVector_regression model')
     plt.xlabel('Predicted Ratings')
     plt.ylabel('Actual Ratings')
     plt.show()
@@ -97,7 +107,11 @@ def svr(x_train, y_train, x_test, y_test):
 
 def randomforest_regression(x_train, y_train, x_test, y_test):
     model = RandomForestRegressor()
+    start = time.time()
     model.fit(x_train, y_train)
+    stop = time.time()
+    training_time['randomforest_regression'] = stop - start
+    print(f"randomforest_regression Training time: {stop - start}s")
     # prediction
     prediction = model.predict(x_test)
     # evaluation
@@ -105,6 +119,7 @@ def randomforest_regression(x_train, y_train, x_test, y_test):
     # print('Intercept of linear regression model', model.intercept_)
     print('randomforest_regression: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
     mean_error['randomforest_regression'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    # regression line plot
     plt.figure(figsize=(12, 7))
     sns.regplot(prediction, y_test, color='teal')
     plt.title('randomforest_regression model')
@@ -116,11 +131,16 @@ def randomforest_regression(x_train, y_train, x_test, y_test):
 def ridge(alpha,x_train, y_train, x_test, y_test):
     model = Ridge(alpha=alpha)
     # fit model
+    start = time.time()
     model.fit(x_train, y_train)
+    stop = time.time()
+    training_time['Ridge'] = stop - start
+    print(f"Ridge Training time: {stop - start}s")
     # prediction
     prediction = model.predict(x_test)
     print('Ridge: \n Mean Square Error', metrics.mean_squared_error(np.asarray(y_test), prediction))
     mean_error['Ridge'] = metrics.mean_squared_error(np.asarray(y_test), prediction)
+    # regression line plot
     plt.figure(figsize=(12, 7))
     sns.regplot(prediction, y_test, color='teal')
     plt.title('Ridge model')
@@ -176,10 +196,27 @@ x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.30, shuffl
 print("\n")
 linear_regression(x_train, y_train, x_test, y_test)
 polynomial_regression(2, x_train, y_train, x_test, y_test)
-svr(x_train, y_train, x_test, y_test)
+supportVector_regression(x_train, y_train, x_test, y_test)
 randomforest_regression(x_train, y_train, x_test, y_test)
 ridge(0.5, x_train, y_train, x_test, y_test)
+
+# differences between each model mean_error
 mean_error = pd.DataFrame.from_dict(mean_error, orient='index')
 mean_error.sort_values(by=0, inplace=True)
-mean_error.plot(kind='barh')
+plot = mean_error.plot(table=True, title="mean_error of each model", figsize=(16, 7), kind='barh')
+plot.axes.get_xaxis().set_visible(False)
+table = plot.tables[0]
+table.set_fontsize(12)
+table.scale(1, 2)
 plt.show()
+
+# differences between each model training_time
+training_time = pd.DataFrame.from_dict(training_time, orient='index')
+training_time.sort_values(by=0, inplace=True)
+plot = training_time.plot(kind='barh', figsize=(16, 7), title="training_time of each model", table=True)
+plot.axes.get_xaxis().set_visible(False)
+table = plot.tables[0]
+table.set_fontsize(12)
+table.scale(1, 2)
+plt.show()
+
