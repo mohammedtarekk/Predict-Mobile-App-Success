@@ -71,38 +71,108 @@ x_test = standard.transform(x_test)
 
 ############## models ##############
 
+accuracies = {}
+training_time = {}
+testing_time = {}
+
 # Random Forest
 randomForest = RandomForestClassifier(random_state=1)
+
+train_start = time.time()
 randomForest.fit(x_train, y_train)
+train_end = time.time()
+
+test_start = time.time()
 y_prediction = randomForest.predict(x_test)
+test_end = time.time()
+
 accuracy = np.mean(y_prediction == y_test) * 100
 print("The achieved accuracy using Random Forest Classifier is " + str(accuracy))
 
+accuracies['random_forest'] = accuracy
+training_time['random_forest'] = train_end - train_start
+testing_time['random_forest'] = test_end - test_start
+
 # save the model
-filename = 'randomForest_classifier.sav'
-pickle.dump(randomForest, open(filename, 'wb'))
+#filename = 'randomForest_classifier.sav'
+#pickle.dump(randomForest, open(filename, 'wb'))
+
 
 # Adaboost with decision tree
 bdt = AdaBoostClassifier(DecisionTreeClassifier(max_depth=2), algorithm="SAMME", n_estimators=100)
+
+train_start = time.time()
 bdt.fit(x_train, y_train)
+train_end = time.time()
+
+test_start = time.time()
 y_prediction = bdt.predict(x_test)
+test_end = time.time()
+
 accuracy = np.mean(y_prediction == y_test) * 100
 print("The achieved accuracy using Adaboost with Decision Tree is " + str(accuracy))
 
+accuracies['adaboost'] = accuracy
+training_time['adaboost'] = train_end - train_start
+testing_time['adaboost'] = test_end - test_start
+
 # save the model
-filename = 'adaboost_classifier.sav'
-pickle.dump(bdt, open(filename, 'wb'))
+#filename = 'adaboost_classifier.sav'
+#pickle.dump(bdt, open(filename, 'wb'))
+
 
 # svm
 C = 10
+
+train_start = time.time()
 rbf_svc = svm.SVC(kernel='rbf', gamma=0.0001, C=C).fit(x_train, y_train)
+train_end = time.time()
+
+test_start = time.time()
 y_prediction = rbf_svc.predict(x_test)
+test_end = time.time()
+
 accuracy = np.mean(y_prediction == y_test) * 100
 print("The achieved accuracy using SVM rbf_svc is " + str(accuracy))
 
+accuracies['svm'] = accuracy
+training_time['svm'] = train_end - train_start
+testing_time['svm'] = test_end - test_start
+
 # save the model
-filename = 'svm_classifier.sav'
-pickle.dump(rbf_svc, open(filename, 'wb'))
+#filename = 'svm_classifier.sav'
+#pickle.dump(rbf_svc, open(filename, 'wb'))
+
+
+# differences between each model accuracy
+accuracies = pd.DataFrame.from_dict(accuracies, orient='index')
+accuracies.sort_values(by=0, inplace=True)
+plot = accuracies.plot(table=True, title="Accuracy of each model", figsize=(16, 7), kind='barh')
+plot.axes.get_xaxis().set_visible(False)
+table = plot.tables[0]
+table.set_fontsize(12)
+table.scale(1, 2)
+plt.show()
+
+# differences between each model training_time
+training_time = pd.DataFrame.from_dict(training_time, orient='index')
+training_time.sort_values(by=0, inplace=True)
+plot = training_time.plot(kind='barh', figsize=(16, 7), title="Training time of each model", table=True)
+plot.axes.get_xaxis().set_visible(False)
+table = plot.tables[0]
+table.set_fontsize(12)
+table.scale(1, 2)
+plt.show()
+
+# differences between each model testing_time
+testing_time = pd.DataFrame.from_dict(testing_time, orient='index')
+testing_time.sort_values(by=0, inplace=True)
+plot = testing_time.plot(kind='barh', figsize=(16, 7), title="Testing time of each model", table=True)
+plot.axes.get_xaxis().set_visible(False)
+table = plot.tables[0]
+table.set_fontsize(12)
+table.scale(1, 2)
+plt.show()
 
 
 """
