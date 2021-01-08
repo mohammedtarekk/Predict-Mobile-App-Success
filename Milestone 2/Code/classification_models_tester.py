@@ -32,8 +32,9 @@ y_test = data['rate']  # Label
 x_test = pd.get_dummies(x_test, drop_first=False)
 
 # Features Scaling
-standard = StandardScaler()
-x_test = standard.fit_transform(x_test)
+filename = 'standardScaling.sav'
+loaded_model = pickle.load(open(filename, 'rb'))
+x_test = loaded_model.transform(x_test)
 
 
 print("########## Random Forest Classifier ##########")

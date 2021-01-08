@@ -67,8 +67,10 @@ def linear_regression(x_train, y_train, x_test, y_test):
 
 def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     poly_features = PolynomialFeatures(degree=degree)
+
     # transforms the existing features to higher degree features.
     X_train_poly = poly_features.fit_transform(X_train)
+
     # fit the transformed features to Linear Regression
     poly_model = linear_model.LinearRegression()
     start = time.time()
@@ -159,6 +161,7 @@ def randomforest_regression(x_train, y_train, x_test, y_test):
 
 def ridge(alpha, x_train, y_train, x_test, y_test):
     model = Ridge(alpha=alpha)
+
     # fit model
     start = time.time()
     model.fit(x_train, y_train)
@@ -217,14 +220,29 @@ Y = data['user_rating']  # Label
 
 # Categories Encoding
 le = LabelEncoder()
-X['cont_rating'] = le.fit_transform(X['cont_rating'])
+le.fit(X['cont_rating'])
+X['cont_rating'] = le.transform(X['cont_rating'])
+
+# save the model
+filename = 'cont_rating_labelEncoder.sav'
+pickle.dump(le, open(filename, 'wb'))
 
 col_trans = make_column_transformer((OneHotEncoder(), ['prime_genre']), remainder='passthrough')
-X = col_trans.fit_transform(X)
+col_trans.fit(X)
+X = col_trans.transform(X)
+
+# save the model
+filename = 'prime_genre_OHEncoder.sav'
+pickle.dump(col_trans, open(filename, 'wb'))
 
 # Features Scaling
 standard = StandardScaler()
-X = standard.fit_transform(X)
+standard.fit(X)
+X = standard.transform(X)
+
+# save the model
+filename = 'standardScaling.sav'
+pickle.dump(standard, open(filename, 'wb'))
 
 # Splitting Data
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.30, shuffle=True)

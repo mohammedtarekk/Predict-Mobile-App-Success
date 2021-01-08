@@ -35,7 +35,6 @@ def data_analyze(df, show_corr=0):
 # Loading Data
 data = pd.read_csv('AppleStore_training_classification.csv')
 
-
 # Data Pre-Processing
 data = data.drop(['id', 'track_name', 'currency', 'ver'], axis=1)  # discard unnecessary features
 data.dropna(axis=0, how="any", thresh=5, inplace=True)  # drop rows with more than 5 null values
@@ -68,6 +67,9 @@ standard.fit(x_train)
 x_train = standard.transform(x_train)
 x_test = standard.transform(x_test)
 
+# save the model
+#filename = 'standardScaling.sav'
+#pickle.dump(standard, open(filename, 'wb'))
 
 ############## models ##############
 

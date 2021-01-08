@@ -20,33 +20,27 @@ data.loc[i, 'prime_genre'] = None
 data["cont_rating"].fillna(method='ffill', inplace=True)
 data["prime_genre"].fillna(method='ffill', inplace=True)
 
-"""
-# processing of the given data #
-data['user_rating_ver'] = data['user_rating_ver'].fillna(data['user_rating_ver'].median())  # filling null values of 'user_rating_ver'
-data.dropna(how='any', inplace=True)  # dropping rows with null values
-
-i = data[data['prime_genre'] == '0'].index  # get the index of the noisy row which has prime_genre = 0
-# print(data.loc[i])
-data = data.drop(i)  # drop this row
-################################
-"""
 
 X_test = data.iloc[:, :11]  # Features
 Y_test = data['user_rating']  # Label
 
-print(data.median())
-print(data['cont_rating'].unique())
-print(data['prime_genre'].unique())
-# Categories Encoding
-le = LabelEncoder()
-X_test['cont_rating'] = le.fit_transform(X_test['cont_rating'])
+#print(data.median())
+#print(data['cont_rating'].unique())
+#print(data['prime_genre'].unique())
 
-col_trans = make_column_transformer((OneHotEncoder(), ['prime_genre']), remainder='passthrough')
-X_test = col_trans.fit_transform(X_test)
+# Categories Encoding
+filename = 'cont_rating_labelEncoder.sav'
+loaded_model = pickle.load(open(filename, 'rb'))
+X_test['cont_rating'] = loaded_model.transform(X_test['cont_rating'])
+
+filename = 'prime_genre_OHEncoder.sav'
+loaded_model = pickle.load(open(filename, 'rb'))
+X_test = loaded_model.transform(X_test)
 
 # Features Scaling
-standard = StandardScaler()
-X_test = standard.fit_transform(X_test)
+filename = 'standardScaling.sav'
+loaded_model = pickle.load(open(filename, 'rb'))
+X_test = loaded_model.transform(X_test)
 
 
 print("########## Linear Regression ##########")
