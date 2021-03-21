@@ -40,7 +40,7 @@ data = data.drop(['id', 'track_name', 'currency', 'ver'], axis=1)  # discard unn
 data.dropna(axis=0, how="any", thresh=5, inplace=True)  # drop rows with more than 5 null values
 data.fillna(data.median(), inplace=True)  # fill null values with its column's median
 
-# tgroba
+# noisy record
 i = data[data['prime_genre'] == '0'].index  # get the index of the noisy row which has prime_genre = 0
 data.loc[i, 'prime_genre'] = None
 
@@ -68,8 +68,8 @@ x_train = standard.transform(x_train)
 x_test = standard.transform(x_test)
 
 # save the model
-#filename = 'standardScaling.sav'
-#pickle.dump(standard, open(filename, 'wb'))
+# filename = 'standardScaling.sav'
+# pickle.dump(standard, open(filename, 'wb'))
 
 ############## models ##############
 
@@ -96,8 +96,8 @@ training_time['random_forest'] = train_end - train_start
 testing_time['random_forest'] = test_end - test_start
 
 # save the model
-#filename = 'randomForest_classifier.sav'
-#pickle.dump(randomForest, open(filename, 'wb'))
+# filename = 'randomForest_classifier.sav'
+# pickle.dump(randomForest, open(filename, 'wb'))
 
 
 # Adaboost with decision tree
@@ -119,8 +119,8 @@ training_time['adaboost'] = train_end - train_start
 testing_time['adaboost'] = test_end - test_start
 
 # save the model
-#filename = 'adaboost_classifier.sav'
-#pickle.dump(bdt, open(filename, 'wb'))
+# filename = 'adaboost_classifier.sav'
+# pickle.dump(bdt, open(filename, 'wb'))
 
 
 # svm
@@ -142,8 +142,8 @@ training_time['svm'] = train_end - train_start
 testing_time['svm'] = test_end - test_start
 
 # save the model
-#filename = 'svm_classifier.sav'
-#pickle.dump(rbf_svc, open(filename, 'wb'))
+# filename = 'svm_classifier.sav'
+# pickle.dump(rbf_svc, open(filename, 'wb'))
 
 
 # differences between each model accuracy

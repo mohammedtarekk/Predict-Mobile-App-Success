@@ -46,8 +46,8 @@ def linear_regression(x_train, y_train, x_test, y_test):
     print(f"linear_regression Training time: {stop - start}s")
 
     # save the model
-    filename = 'linear_regression.sav'
-    pickle.dump(model, open(filename, 'wb'))
+    # filename = 'linear_regression.sav'
+    # pickle.dump(model, open(filename, 'wb'))
 
     # prediction
     prediction = model.predict(x_test)
@@ -80,8 +80,8 @@ def polynomial_regression(degree, X_train, y_train, X_test, y_test):
     print(f"polynomial_regression Training time: {stop - start}s")
 
     # save the model
-    filename = 'poly_regression.sav'
-    pickle.dump(poly_model, open(filename, 'wb'))
+    # filename = 'poly_regression.sav'
+    # pickle.dump(poly_model, open(filename, 'wb'))
 
     # prediction
     prediction = poly_model.predict(poly_features.fit_transform(X_test))
@@ -110,8 +110,8 @@ def supportVector_regression(x_train, y_train, x_test, y_test):
     print(f"supportVector_regression Training time: {stop - start}s")
 
     # save the model
-    filename = 'svm_regression.sav'
-    pickle.dump(model, open(filename, 'wb'))
+    # filename = 'svm_regression.sav'
+    # pickle.dump(model, open(filename, 'wb'))
 
     # prediction
     prediction = model.predict(x_test)
@@ -138,8 +138,8 @@ def randomforest_regression(x_train, y_train, x_test, y_test):
     print(f"randomforest_regression Training time: {stop - start}s")
 
     # save the model
-    filename = 'randomforest_regression.sav'
-    pickle.dump(model, open(filename, 'wb'))
+    # filename = 'randomforest_regression.sav'
+    # pickle.dump(model, open(filename, 'wb'))
 
     # prediction
     prediction = model.predict(x_test)
@@ -170,8 +170,8 @@ def ridge(alpha, x_train, y_train, x_test, y_test):
     print(f"Ridge Training time: {stop - start}s")
 
     # save the model
-    filename = 'ridge_regression.sav'
-    pickle.dump(model, open(filename, 'wb'))
+    # filename = 'ridge_regression.sav'
+    # pickle.dump(model, open(filename, 'wb'))
 
     # prediction
     prediction = model.predict(x_test)
@@ -202,15 +202,19 @@ data['user_rating_ver'] = data['user_rating_ver'].fillna(data['user_rating_ver']
 data.dropna(how='any', inplace=True)  # dropping rows with null values
 
 print('#' * 50)
+print('########## FEATURES INFO. ##########')
 print(data.info())  # show the features
 print(data['prime_genre'].unique())  # get categories of 'prime_genre'
 print('#' * 50)
 print(data['cont_rating'].unique())  # get categories 'cont_rating'
 print('#' * 50)
 
+print('########### NOISY DATA DETECTION ###########')
 i = data[data['prime_genre'] == '0'].index  # get the index of the noisy row which has prime_genre = 0
 print(data.loc[i])
 data = data.drop(i)  # drop this row
+print(f'row with index {i} is dropped successfully')
+print('############################################')
 
 print("\n##### Data analysis after cleaning #####")
 data_analyze(data)
@@ -223,26 +227,26 @@ le = LabelEncoder()
 le.fit(X['cont_rating'])
 X['cont_rating'] = le.transform(X['cont_rating'])
 
-# save the model
-filename = 'cont_rating_labelEncoder.sav'
-pickle.dump(le, open(filename, 'wb'))
+# save the label encoder model
+# filename = 'cont_rating_labelEncoder.sav'
+# pickle.dump(le, open(filename, 'wb'))
 
 col_trans = make_column_transformer((OneHotEncoder(), ['prime_genre']), remainder='passthrough')
 col_trans.fit(X)
 X = col_trans.transform(X)
 
-# save the model
-filename = 'prime_genre_OHEncoder.sav'
-pickle.dump(col_trans, open(filename, 'wb'))
+# save the oneHot encoder model
+# filename = 'prime_genre_OHEncoder.sav'
+# pickle.dump(col_trans, open(filename, 'wb'))
 
 # Features Scaling
 standard = StandardScaler()
 standard.fit(X)
 X = standard.transform(X)
 
-# save the model
-filename = 'standardScaling.sav'
-pickle.dump(standard, open(filename, 'wb'))
+# save the standard scaler model
+# filename = 'standardScaling.sav'
+# pickle.dump(standard, open(filename, 'wb'))
 
 # Splitting Data
 x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.30, shuffle=True)

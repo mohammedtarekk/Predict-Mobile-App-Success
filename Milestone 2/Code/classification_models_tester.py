@@ -14,7 +14,7 @@ data = pd.read_csv('AppleStore_training_classification.csv')
 data = data.drop(['id', 'track_name', 'currency', 'ver'], axis=1)  # discard unnecessary features
 data.fillna(data.median(), inplace=True)  # fill null values with its column's median
 
-# tgroba
+# noisy record
 i = data[data['prime_genre'] == '0'].index  # get the index of the noisy row which has prime_genre = 0 , if exists
 data.loc[i, 'prime_genre'] = None
 
